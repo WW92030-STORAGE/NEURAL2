@@ -18,7 +18,7 @@ Only `main.cpp` for now.
 
 # HOW TO RECREATE THIS  
   
-Read through the header files for information on how neural networks learn and operate. This code isn't intended to be the most optimized.
+Read through the header files for information on how neural networks learn and operate.
 
 # QUESTIONS/CONCERNS/ISSUES
 
