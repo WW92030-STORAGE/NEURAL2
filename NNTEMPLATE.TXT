@@ -7,17 +7,21 @@ class NNLayer : public Layer {
     NNLayer(int NI, int NO) : Layer(NI, NO) {
     }
 
+    NNLayer(const NNLayer& other) : Layer(other) {
+        // do stuff here
+    }
+
     ~NNLayer() {
 
     }
     
-    virtual inline std::string to_string() {
+    virtual std::string to_string() {
         return "Layer[]";
     }
 
     // Forward propagation
 
-    inline std::vector<NN_NUMERIC_T> forward(std::vector<NN_NUMERIC_T> input) {
+    std::vector<NN_NUMERIC_T> forward(std::vector<NN_NUMERIC_T> input) {
         std::vector<NN_NUMERIC_T> output(N_OUTPUTS, 0);
 
         // do stuff here
@@ -28,7 +32,7 @@ class NNLayer : public Layer {
     }
 
     // backprop using the most recent forward pass. returns gradients with respect to inputs.
-    inline std::vector<NN_NUMERIC_T> backward(std::vector<NN_NUMERIC_T> gradients) {
+    std::vector<NN_NUMERIC_T> backward(std::vector<NN_NUMERIC_T> gradients) {
         std::vector<NN_NUMERIC_T> vgrads(N_INPUTS, 0);
 
         // do stuff here

@@ -4,7 +4,7 @@
 #include "Layer.h"
 #include "NN.h"
 #include "NN_IMPORTANT.h"
-
+#include "LayerStack.h"
 
 
 // https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/
@@ -92,9 +92,9 @@ void simpletest() {
     }
 }
 
-// Is the 3-dimensional point at most 1 away from the origin but more than 0.5? (Points are chosen in a box roughly of half-side length 1.612 = cuberoot of 4pi/3)
+// Is the 3-dimensional point at most 1 away from the origin but more than 0.5? (Points are chosen in a box roughly of half-side length 1.01549129756 = 0.5 * cuberoot of 4pi/3 * 2)
 void spheretest() {
-    int N_TRAIN = 1000000;
+    int N_TRAIN = 100000;
     int THRESHOLD = 0.9 * N_TRAIN;
 
     LinearLayer L(3, 4);
@@ -105,7 +105,7 @@ void spheretest() {
     int confusion[2][2] = {{0, 0}, {0 ,0}};
 
     for (int TRAIN = 0; TRAIN < N_TRAIN; TRAIN++) {
-        std::vector<NN_NUMERIC_T> input = randradvec(3, 1.612);
+        std::vector<NN_NUMERIC_T> input = randradvec(3, 1.01549129756);
 
         NN_NUMERIC_T distsq = input[0] * input[0] + input[1] * input[1] + input[2] * input[2];
 
@@ -134,7 +134,7 @@ void spheretest() {
 
 // Same test except with two hidden layers
 void spheretest3() {
-    int N_TRAIN = 1000000;
+    int N_TRAIN = 100000;
     int THRESHOLD = 0.9 * N_TRAIN;
 
     LinearLayer L(3, 4);
@@ -147,7 +147,7 @@ void spheretest3() {
     int confusion[2][2] = {{0, 0}, {0 ,0}};
 
     for (int TRAIN = 0; TRAIN < N_TRAIN; TRAIN++) {
-        std::vector<NN_NUMERIC_T> input = randradvec(3, 1.612);
+        std::vector<NN_NUMERIC_T> input = randradvec(3, 1.01549129756);
 
         NN_NUMERIC_T distsq = input[0] * input[0] + input[1] * input[1] + input[2] * input[2];
 
@@ -174,8 +174,52 @@ void spheretest3() {
     }
 }
 
+// Same test except with a stack instead of individual layers
+void stacktest() {
+    int N_TRAIN = 100000;
+    int THRESHOLD = 0.9 * N_TRAIN;
+
+    LinearLayer L(3, 4);
+    SigmoidLayer S(4);
+    LinearLayer L2(4, 4);
+    SigmoidLayer S2(4);
+    LinearLayer L3(4, 2);
+    SigmoidLayer S3(2);
+
+    LayerStack stack(std::vector<Layer*>({&L, &S, &L2, &S2, &L3, &S3}));
+
+    int confusion[2][2] = {{0, 0}, {0 ,0}};
+
+    for (int TRAIN = 0; TRAIN < N_TRAIN; TRAIN++) {
+        std::vector<NN_NUMERIC_T> input = randradvec(3, 1.01549129756);
+
+        NN_NUMERIC_T distsq = input[0] * input[0] + input[1] * input[1] + input[2] * input[2];
+
+        auto expected = std::vector<NN_NUMERIC_T>({(distsq <= 1) ? 0.99 : 0.01});
+        expected.push_back(1.0 - expected[0]);
+        auto actual = stack(input);
+
+        std::cout << "ITER " << TRAIN << " ";
+        std::cout << "INPUTS " << toString(input) << " ";
+        std::cout << "EXPECTED " << toString(expected) << " ";
+        std::cout << "ACTUAL " << toString(actual) + "\n";
+        // std::cout << "WEIGHTS " << L.to_string() << "\n";
+
+        auto err = sub(actual, expected);
+        stack.backward(err);
+
+        if (TRAIN >= THRESHOLD) confusion[actual[0] > actual[1]][expected[0] > expected[1]]++;
+    }
+
+    std::cout << "CONFUSION (Rows actual, columns expected)\n";
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) std::cout << confusion[i][j] << " ";
+        std::cout << std::endl;
+    }
+}
+
 int main() {
     srand(4);
-    spheretest();
+    stacktest();
     return 0;
 }

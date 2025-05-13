@@ -1,5 +1,5 @@
-#ifndef NN_H
-#define NN_H
+#ifndef NN_NEURAL2
+#define NN_NEURAL2
 
 #include "NN_IMPORTANT.h"
 #include "Layer.h"
@@ -37,6 +37,13 @@ class LinearLayer : public Layer {
 
     LinearLayer(int NI, int NO) : Layer(NI, NO) {
         init();
+    }
+
+    LinearLayer(const LinearLayer& other) : Layer(other) {
+        init();
+        for (int i = 0; i <= N_INPUTS; i++) {
+            for (int j = 0; j < N_OUTPUTS; j++) weights[i][j] = other.weights[i][j];
+        } 
     }
 
     ~LinearLayer() {
@@ -138,6 +145,10 @@ class SigmoidLayer : public Layer {
     }
 
     SigmoidLayer(int N) : Layer(N, N) {
+    }
+
+    SigmoidLayer(const SigmoidLayer& other) : Layer(other) {
+
     }
 
     ~SigmoidLayer() {

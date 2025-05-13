@@ -1,5 +1,5 @@
-#ifndef LAYER_H
-#define LAYER_H
+#ifndef LAYER_NEURAL2
+#define LAYER_NEURAL2
 
 
 #include <vector>
@@ -43,6 +43,15 @@ class Layer {
         N_INPUTS = NI;
         N_OUTPUTS = NO;
         initMR();
+    }
+
+    Layer(const Layer& other) {
+        N_INPUTS = other.N_INPUTS;
+        N_OUTPUTS = other.N_OUTPUTS;
+        LR = other.LR;
+        initMR();
+        for (int i = 0; i <= N_INPUTS; i++) mri[i] = other.mri[i];
+        for (int i = 0; i < N_OUTPUTS; i++) mro[i] = other.mro[i];
     }
 
     virtual ~Layer() {

@@ -1,5 +1,5 @@
-#ifndef NN_IMPORTANT_H__
-#define NN_IMPORTANT_H__
+#ifndef NN_IMPORTANT_NEURAL2
+#define NN_IMPORTANT_NEURAL2
 
 #include <climits>
 #include <cstdint>
