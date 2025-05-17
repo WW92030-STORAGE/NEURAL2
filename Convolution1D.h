@@ -66,7 +66,7 @@ class Convolution1D : public Layer {
 
         for (int i = 0; i < N_OUTPUTS; i++) {
             NN_NUMERIC_T res = 0;
-            for (int j = 0; j < WIDTH; j++) res += filter[j] * input[i + j];
+            for (int j = 0; j < WIDTH; j++) res += filter[WIDTH - 1 - j] * input[i + j]; // Flip the kernel in convolution
             output[i] = res;
         }
 
@@ -103,14 +103,18 @@ class Convolution1D : public Layer {
         dE/dIN[j] = sum over all applicable: gradients[i] * W[k]
         dE/dW[k] = sum over all applicable: gradients[i] * IN[j]
 
+        Of course if we flip the kernel in a convolution then the corresponding indices are also flipped:
+
+        dE/dW[k'] = sum gradients[i] * in[j] where k' = WIDTH - 1 - k...
+
         */
 
         for (int i = 0; i < N_OUTPUTS; i++) {
             for (int k = 0; k < WIDTH; k++) {
                 int j = i + k;
                 if (j < 0 || j >= N_INPUTS) continue;
-                vgrads[j] += gradients[i] * filter[k];
-                wgrads[k] += gradients[i] * mri[j];
+                vgrads[j] += gradients[i] * filter[WIDTH - 1 - k];
+                wgrads[WIDTH - 1 - k] += gradients[i] * mri[j];
             }
         }
 

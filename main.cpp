@@ -297,10 +297,10 @@ void conv1d() {
     int confusion[2][2] = {{0, 0}, {0 ,0}};
 
     int N_IN = 16;
-    int N_OUT = 13;
+    int N_OUT = 10;
     int WIDTH = N_IN - N_OUT + 1;
 
-    int CONS = 4;
+    int CONS = 3;
 
     // Declare layers here
     Convolution1D conv(N_IN, N_OUT);
@@ -353,6 +353,6 @@ void conv1d() {
 
 int main() {
     srand(4);
-    runstest();
+    conv1d();
     return 0;
 }
