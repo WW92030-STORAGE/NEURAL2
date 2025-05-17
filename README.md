@@ -7,7 +7,11 @@ NEURAL2 is a torch-like collection of neural-network-related classes and structu
 # CREDITS  
   
 Modularity is based on PyTorch/Tensorflow. The computational algorithms are based on various resources obtained on the internet, some of which are credited in the runner files.
-  
+
+# PARTICULAR RESOURCES
+
+https://deeplearning.cs.cmu.edu/F21/
+
 # DEDICATIONS  
   
 NULL

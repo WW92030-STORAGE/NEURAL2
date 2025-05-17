@@ -60,7 +60,7 @@ class Layer {
     }
 
     virtual std::string to_string() {
-        return "Layer[]";
+        return "Layer[" + std::to_string(N_INPUTS) + ", " + std::to_string(N_OUTPUTS) + "]";
     }
 
     void setMR(std::vector<NN_NUMERIC_T> input, std::vector<NN_NUMERIC_T> output) {

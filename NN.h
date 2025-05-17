@@ -7,7 +7,6 @@
 #include <vector>
 #include <string>
 
-
 #include <iostream>
 
 // Simple dense linear layer
@@ -52,7 +51,7 @@ class LinearLayer : public Layer {
     }
 
     virtual std::string to_string() {
-        std::string res = "LinearLayer[";
+        std::string res = Layer::to_string() + ": LinearLayer[";
         for (int i = 0; i <= N_INPUTS; i++) {
             res += toString(weights[i], N_OUTPUTS);
         }
@@ -172,6 +171,11 @@ class SigmoidLayer : public Layer {
         if (verbose) std::cout << "Sigmoid Grads " << toString(vgrads) << "\n";
 
         return vgrads;
+    }
+
+    virtual std::string to_string() {
+        std::string res = Layer::to_string() + ": SigmoidLayer[]";
+        return res;
     }
 };
 

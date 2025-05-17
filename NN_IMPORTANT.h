@@ -35,20 +35,20 @@ int randi(int x) {
     return (int)(rand01() * x);
 }
 
-std::vector<NN_NUMERIC_T> randvec(int n, NN_NUMERIC_T range) {
+std::vector<NN_NUMERIC_T> randvec(int n, NN_NUMERIC_T range = 1) {
     std::vector<NN_NUMERIC_T> thing(n);
     for (int i = 0; i < n; i++) thing[i] = rand01() * range;
     return thing;
 }
 
 
-std::vector<NN_NUMERIC_T> randradvec(int n, NN_NUMERIC_T range) {
+std::vector<NN_NUMERIC_T> randradvec(int n, NN_NUMERIC_T range = 1) {
     std::vector<NN_NUMERIC_T> thing(n);
     for (int i = 0; i < n; i++) thing[i] = randradius() * range;
     return thing;
 }
 
-std::vector<NN_NUMERIC_T> randivec(int n, NN_NUMERIC_T range) {
+std::vector<NN_NUMERIC_T> randivec(int n, NN_NUMERIC_T range = 2) {
     std::vector<NN_NUMERIC_T> thing(n);
     for (int i = 0; i < n; i++) thing[i] = randi(range);
     return thing;
