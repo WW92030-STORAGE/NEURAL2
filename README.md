@@ -30,4 +30,4 @@ Feel free to push an issue, do a pull request, or simply contact me (NormalExist
 
 # SHOWCASE!
 
-NULL
+Confusion matrix for `conv1d` unit test: `[[4886, 1281], [1126, 12707]]`
