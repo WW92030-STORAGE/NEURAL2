@@ -8,8 +8,6 @@
 #include "NN_IMPORTANT.h"
 
 
-#include <iostream>
-
 // Base Layer
 
 class Layer {
@@ -20,12 +18,14 @@ class Layer {
     int N_OUTPUTS;
 
     // Learning rate
-    NN_NUMERIC_T LR = 0.1;
+    NN_NUMERIC_T LR = 0.01;
     // most recent outputs/inputs
-    NN_NUMERIC_T* mro;
-    NN_NUMERIC_T* mri;
+    NN_NUMERIC_T* mro = 0;
+    NN_NUMERIC_T* mri = 0;
 
     void initMR() {
+        if (mro) delete[] mro;
+        if (mri) delete[] mri;
         mro = new NN_NUMERIC_T[N_OUTPUTS];
         mri = new NN_NUMERIC_T[N_INPUTS + 1];
 
@@ -55,8 +55,8 @@ class Layer {
     }
 
     virtual ~Layer() {
-        delete[] mro;
-        delete[] mri;
+        if (mro) delete[] mro;
+        if (mri) delete[] mri;
     }
 
     virtual std::string to_string() {

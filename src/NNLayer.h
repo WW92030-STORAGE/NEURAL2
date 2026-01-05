@@ -8,6 +8,7 @@
 #include <string>
 
 #include <iostream>
+#include <algorithm>
 
 // Simple dense linear layer
 
@@ -169,6 +170,54 @@ class SigmoidLayer : public Layer {
 
         for (int i = 0; i < N_INPUTS; i++) vgrads[i] = sigd(mri[i], mro[i]) * gradients[i];
         if (verbose) std::cout << "Sigmoid Grads " << toString(vgrads) << "\n";
+
+        return vgrads;
+    }
+
+    virtual std::string to_string() {
+        std::string res = Layer::to_string() + ": SigmoidLayer[]";
+        return res;
+    }
+};
+
+class ReLULayer : public Layer {
+    public:
+    NN_NUMERIC_T LEAK = 0.01;
+
+    ReLULayer() : Layer() {
+        N_INPUTS = 2;
+        N_OUTPUTS = 2;
+    }
+
+    ReLULayer(int N) : Layer(N, N) {
+    }
+
+    ReLULayer(const ReLULayer& other) : Layer(other) {
+
+    }
+
+    ~ReLULayer() {
+
+    }
+
+    std::vector<NN_NUMERIC_T> forward(std::vector<NN_NUMERIC_T> input) {
+        std::vector<NN_NUMERIC_T> output(N_OUTPUTS, 0);
+        for (int i = 0; i < N_INPUTS; i++) {
+            if (input[i] > 0) output[i] = input[i];
+            else output[i] = input[i] * LEAK;
+        }
+        setMR(input, output);
+        return output;
+    }
+
+    // backprop using the most recent forward pass. returns gradients with respect to inputs.
+    // dE/dI = dE/dS * dS/dI
+    std::vector<NN_NUMERIC_T> backward(std::vector<NN_NUMERIC_T> gradients) {
+        std::vector<NN_NUMERIC_T> vgrads(N_INPUTS, 0);
+        if (verbose) std::cout << "ReLU Rev " << toString(mro, N_OUTPUTS) << " " << toString(gradients) << "\n";
+
+        for (int i = 0; i < N_INPUTS; i++) vgrads[i] = (mri[i] > 0 ? 1 : LEAK) * gradients[i];
+        if (verbose) std::cout << "ReLU Grads " << toString(vgrads) << "\n";
 
         return vgrads;
     }

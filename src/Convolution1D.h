@@ -3,7 +3,7 @@
 
 #include "NN_IMPORTANT.h"
 #include "Layer.h"
-#include "NN.h"
+#include "NNLayer.h"
 
 #include <vector>
 #include <string>
@@ -11,7 +11,7 @@
 
 /*
 
-Convolutional layer with stride 1 (scans across all windows)
+Convolutional layer with stride 1 (scans across all windows) (extremely crude implementation)
 
 */
 
@@ -19,7 +19,7 @@ class Convolution1D : public Layer {
     public:
     int WIDTH = 1;
 
-    NN_NUMERIC_T* filter;
+    NN_NUMERIC_T* filter = 0;
 
     void init() {
                 // first window is from 0 ... W - 1
@@ -27,6 +27,7 @@ class Convolution1D : public Layer {
         // all the way to (NI - W) ... (NI - 1)
         // NI - W + 1 = NO --> W = NI + 1 - NO
         WIDTH = N_INPUTS + 1 - N_OUTPUTS;
+        if (filter) delete[] filter;
         filter = new NN_NUMERIC_T[WIDTH];
         for (int i = 0; i < WIDTH; i++) filter[i] = randradius();
     }
@@ -47,7 +48,7 @@ class Convolution1D : public Layer {
     }
 
     ~Convolution1D() {
-        delete[] filter;
+        if (filter) delete[] filter;
     }
     
     virtual std::string to_string() {
@@ -101,7 +102,7 @@ class Convolution1D : public Layer {
         Remember that k ranges from 0 to (WIDTH - 1)
 
         dE/dIN[j] = sum over all applicable: gradients[i] * W[k]
-        dE/dW[k] = sum over all applicable: gradients[i] * IN[j]
+        dE/dW[k] = sum over all applicable: gradients[i] * IN[j] <-- That's a convolution! (the j's, i's that are influenced/influence the W[k] are a sliding window.)
 
         Of course if we flip the kernel in a convolution then the corresponding indices are also flipped:
 

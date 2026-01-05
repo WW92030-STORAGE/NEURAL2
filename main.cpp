@@ -1,10 +1,11 @@
 #include <bits/stdc++.h>
 
 
-#include "Layer.h"
-#include "NN.h"
-#include "NN_IMPORTANT.h"
-#include "LayerStack.h"
+#include "src/Layer.h"
+#include "src/NNLayer.h"
+#include "src/NN_IMPORTANT.h"
+#include "src/LayerStack.h"
+#include "src/LayerTypes.h"
 
 using namespace std;
 
@@ -304,9 +305,9 @@ void conv1d() {
 
     // Declare layers here
     Convolution1D conv(N_IN, N_OUT);
-    SigmoidLayer T(N_OUT);
+    ReLULayer T(N_OUT);
     LinearLayer L(N_OUT, 2);
-    SigmoidLayer S(2);
+    ReLULayer S(2);
 
     for (int TRAIN = 0; TRAIN < N_TRAIN; TRAIN++) {
         // Declare the inputs
@@ -351,8 +352,97 @@ void conv1d() {
     }
 }
 
+void conv2d() {
+    Convolution2D conv(3, 3);
+
+    for (int i = 0; i < 3; i++) {
+        conv.filters[0][0][i][0] = 1;
+        conv.filters[0][0][i][1] = 0;
+        conv.filters[0][0][i][2] = -1;
+    }
+
+    std::cout << toString(conv.filters[0][0]);
+
+    std::vector<std::vector<NN_NUMERIC_T>> mat = Tensor2D(16, 16);
+    for (int i = 0; i < 16; i++) {
+        for (int j = i; j < 16; j++) mat[i][j] = 4;
+    }
+
+    Tensor3 v({mat});
+
+    auto res = conv(v);
+    std::cout << toString(res[0]);
+}
+
+void cnn() { // input is 16x16
+    Convolution2D C1(3, 3, 1, 1);
+    Sigmoid3D R1(1, 14, 14);
+    Flatten3D FA(1, 14, 14);
+
+    LinearLayer L1(196, 64);
+    SigmoidLayer S1(64);
+    LinearLayer L2(64, 2);
+    SigmoidLayer S2(2);
+
+
+    // Test if a matrix has a contiguous 3x3 block of 1s
+    int N_TRAIN = 1500000;
+    int THRESHOLD = 0.9 * N_TRAIN;
+    int confusion[2][2] = {{0, 0}, {0 ,0}};
+
+
+    for (int TRAIN = 0; TRAIN < N_TRAIN; TRAIN++) {
+        // Declare the inputs
+        Tensor2 input = Tensor2D(16, 16);
+        for (int i = 0; i < 16; i++) {
+            for (int j = 0; j < 16; j++) input[i][j] = (randi(2) == 0) ? 1 : 0;
+        }
+
+        // calculate the expected
+        std::vector<NN_NUMERIC_T> expected(2, 0.01);
+        bool hasrun = false;
+        for (int i = 0; i < 14; i++) {
+            for (int j = 0; j < 14; j++) {
+                bool x = true;
+                for (int k = 0; k < 9; k++) {
+                    if (!input[i + (k / 3)][j + (k % 3)]) x = false;
+                }
+                hasrun |= x;
+            }
+        }
+
+        // cout << toBoolString(input) << "\n" << hasrun << "\n";
+
+        if (hasrun) expected[0] = 0.99;
+        else expected[1] = 0.99;
+
+        // Foward propagate the model
+        auto true_in = Tensor3({input});
+        auto actual = S2(L2(S1(L1(FA(R1(C1(true_in)))))));
+
+        // Backward propagaate the model
+        auto err = sub(actual, expected);
+
+        C1.backward(R1.backward(FA.backwards(L1.backward(S1.backward(L2.backward(S2.backward(err)))))));
+
+        if (TRAIN >= THRESHOLD) {
+            confusion[actual[0] > actual[1]][expected[0] > expected[1]]++;
+        }
+    }
+
+    std::cout << "CONFUSION (Rows actual, columns expected)\n";
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) std::cout << confusion[i][j] << " ";
+        std::cout << std::endl;
+    }
+
+    cout << toString(C1.filters[0][0]) << endl;
+    cout << toString(L2.weights, L2.N_INPUTS + 1, L2.N_OUTPUTS) << endl;
+
+}
+
 int main() {
     srand(4);
-    conv1d();
+    cnn();
     return 0;
 }

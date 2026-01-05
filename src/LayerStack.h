@@ -5,6 +5,8 @@
 
 A stack of NN layers! You put in an input, get an output, it can also backprop using a single method!
 
+WARNING: Right now this only supports layers that input and output 1D tensors. I am currently working on making this polymorphic (probably just going to spam std::any or std::variant everywhere)
+
 */
 
 #include <vector>

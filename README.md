@@ -18,7 +18,7 @@ NULL
 
 # HOW TO USE THIS
 
-Only `main.cpp` for now.
+Only `main.cpp` for now. Forward functions are called `forward` (usually) or `forwards` (usually `operator()` also overrides it), and backwards functions are called `backward` (usually) or `backwards`. Blame the type/inheritance systems and my foolishness in thinking this could just be one little happy polymorphic family. (Maybe I can make `Layer` generic?)
 
 # HOW TO RECREATE THIS  
   

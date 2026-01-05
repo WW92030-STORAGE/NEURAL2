@@ -9,7 +9,8 @@ A header file containing all layer types
 
 #include "Layer.h"
 #include "NN_IMPORTANT.h"
-#include "NN.h"
+#include "NNLayer.h"
 #include "Convolution1D.h"
+#include "Convolution2D.h"
 
 #endif
